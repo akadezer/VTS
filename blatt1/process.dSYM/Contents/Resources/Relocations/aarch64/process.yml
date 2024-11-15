@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/aleksandarmaksimovic/Projects/vts/blatt1/process'
+relocations:     []
+...
