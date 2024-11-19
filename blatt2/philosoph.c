@@ -24,7 +24,12 @@ void P(int left_sem, int right_sem)
     semaphore[right_sem].sem_op = -1; // P
     semaphore[right_sem].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
 
-    if (semop(sem_id, &semaphore, 2))
+    if (semop(sem_id, &semaphore[left_sem], SEM_NUM))
+    { // 1 ist Groesse Array
+        perror("Error in semop P()");
+        exit(1);
+    }
+    if (semop(sem_id, &semaphore[left_sem], SEM_NUM))
     { // 1 ist Groesse Array
         perror("Error in semop P()");
         exit(1);
@@ -41,7 +46,12 @@ void V(int left_sem, int right_sem)
     semaphore[right_sem].sem_num = 0;
     semaphore[right_sem].sem_op = 1; // V
     semaphore[right_sem].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
-    if (semop(sem_id, &semaphore, 2))
+    if (semop(sem_id, &semaphore[left_sem], SEM_NUM))
+    { // 1 ist Groesse Array
+        perror("Error in semop V()");
+        exit(1);
+    }
+    if (semop(sem_id, &semaphore[right_sem], SEM_NUM))
     { // 1 ist Groesse Array
         perror("Error in semop V()");
         exit(1);
