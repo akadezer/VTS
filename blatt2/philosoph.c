@@ -31,7 +31,7 @@ void P(int left_sem, int right_sem)
     }
 }
 
-void P(int left_sem, int right_sem)
+void V(int left_sem, int right_sem)
 {
     struct sembuf semaphore[SEM_NUM];
     semaphore[left_sem].sem_num = 0;
