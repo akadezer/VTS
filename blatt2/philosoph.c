@@ -16,20 +16,15 @@ int ub = 5;
 void P(int left_sem, int right_sem)
 {
     struct sembuf semaphore[2];
-    semaphore[0].sem_num = 0;
+    semaphore[0].sem_num = left_sem;
     semaphore[0].sem_op = -1; // P
     semaphore[0].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
 
-    semaphore[1].sem_num = 0;
+    semaphore[1].sem_num = right_sem;
     semaphore[1].sem_op = -1; // P
     semaphore[1].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
 
-    if (semop(sem_id, &semaphore[0], left_sem))
-    { // 1 ist Groesse Array
-        perror("Error in semop P()");
-        exit(1);
-    }
-    if (semop(sem_id, &semaphore[1], right_sem))
+    if (semop(sem_id, &semaphore, 2))
     { // 1 ist Groesse Array
         perror("Error in semop P()");
         exit(1);
@@ -39,19 +34,14 @@ void P(int left_sem, int right_sem)
 void V(int left_sem, int right_sem)
 {
     struct sembuf semaphore[2];
-    semaphore[0].sem_num = 0;
+    semaphore[0].sem_num = left_sem;
     semaphore[0].sem_op = 1; // V
     semaphore[0].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
 
-    semaphore[1].sem_num = 0;
+    semaphore[1].sem_num = right_sem;
     semaphore[1].sem_op = 1; // V
     semaphore[1].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
-    if (semop(sem_id, &semaphore[0], left_sem))
-    { // 1 ist Groesse Array
-        perror("Error in semop V()");
-        exit(1);
-    }
-    if (semop(sem_id, &semaphore[1], right_sem))
+    if (semop(sem_id, &semaphore, 2))
     { // 1 ist Groesse Array
         perror("Error in semop V()");
         exit(1);
