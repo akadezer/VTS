@@ -85,9 +85,9 @@ int main()
         switch (fork())
         {
         case 0:
-            printf("%d", i);
+            printf("Process %d mit pid: ", i, getpid());
             int j = 0;
-            while (j < 6)
+            while (j < 1)
             {
                 /* code */
 
@@ -96,23 +96,23 @@ int main()
                 int r = (rand() % (ub - lb) + lb);
                 if (r == i)
                 {
-                    P(i, (i % 5));
+                    P(i, ((i + 1) % 5));
                     essen = true;
                 }
 
                 while (essen == true)
                 {
 
-                    printf("Philosoph %d ist am essen \n", i);
                     int r2 = (rand() % (ub - lb) + lb);
                     if (r2 == i)
                     {
+                        printf("Philosoph %d ist am essen \n", i);
                         essen = false;
-                        V(i, (i % 5));
+                        V(i, ((i + 1) % 5));
                         j++;
                     }
                 }
-
+                sleep(3);
                 printf("Philosoph %d ist am denken \n", i);
             }
 
