@@ -24,7 +24,7 @@ void P(int left_sem, int right_sem)
     semaphore[1].sem_op = -1; // P
     semaphore[1].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
 
-    if (semop(sem_id, &semaphore, 2))
+    if (semop(sem_id, semaphore, 2))
     { // 1 ist Groesse Array
         perror("Error in semop P()");
         exit(1);
@@ -41,7 +41,7 @@ void V(int left_sem, int right_sem)
     semaphore[1].sem_num = right_sem;
     semaphore[1].sem_op = 1; // V
     semaphore[1].sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
-    if (semop(sem_id, &semaphore, 2))
+    if (semop(sem_id, semaphore, 2))
     { // 1 ist Groesse Array
         perror("Error in semop V()");
         exit(1);
@@ -86,8 +86,11 @@ int main()
         {
         case 0:
             printf("%d", i);
-            for (int j = 0; j < 5; j++)
+            int j = 0;
+            while (j < 6)
             {
+                /* code */
+
                 bool essen = false;
                 srand(time(NULL));
                 int r = (rand() % (ub - lb) + lb);
@@ -99,17 +102,17 @@ int main()
 
                 while (essen == true)
                 {
-                    sleep(5);
+
                     printf("Philosoph %d ist am essen \n", i);
                     int r2 = (rand() % (ub - lb) + lb);
                     if (r2 == i)
                     {
                         essen = false;
                         V(i, (i % 5));
+                        j++;
                     }
                 }
 
-                sleep(5);
                 printf("Philosoph %d ist am denken \n", i);
             }
 
