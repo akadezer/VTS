@@ -62,22 +62,20 @@ void init_sem()
 
 int main()
 {
-    key_t sem_key[5];
+    key_t sem_key;
 
-    for (int i = 0; i < 5; i++)
+    if ((sem_key = ftok("/Users/aleksandarmaksimovic/Projects/vts/blatt2/", '1')) < 0)
     {
-        if ((sem_key[i] = ftok("/Users/aleksandarmaksimovic/Projects/vts/blatt2/", '1')) < 0)
-        {
-            perror("Fehler bei ftok");
-            exit(1);
-        }
-
-        if ((sem_id = semget(sem_key[i], 5, IPC_CREAT | 0666)) < 0)
-        {
-            perror("Error in semget");
-            exit(1);
-        }
+        perror("Fehler bei ftok");
+        exit(1);
     }
+
+    if ((sem_id = semget(sem_key, 5, IPC_CREAT | 0666)) < 0)
+    {
+        perror("Error in semget");
+        exit(1);
+    }
+
     init_sem();
     for (int i = 0; i < 5; i++)
     {
