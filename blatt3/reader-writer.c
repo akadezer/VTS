@@ -11,9 +11,37 @@
 #define NUM_OF_READER 5
 #define MUTEX 1
 int sem_id;
-pid_t writer[NUM_OF_WRITER];
-pid_t reader[NUM_OF_READER];
+int writer = 1;
+int mutex = 0;
+int reader;
+void P(int semaphore_num)
+{
 
+    struct sembuf semaphore;
+    semaphore.sem_num = semaphore_num;
+    semaphore.sem_op = -1; // P-Operation
+    semaphore.sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
+
+    if (semop(sem_id, &semaphore, 1))
+    { // 1 ist Groesse Array
+        perror("Error in semop P()");
+        exit(1);
+    }
+}
+void V(int semaphore_num)
+{
+
+    struct sembuf semaphore;
+    semaphore.sem_num = semaphore_num;
+    semaphore.sem_op = 1; // V-Operation
+    semaphore.sem_flg = ~(IPC_NOWAIT | SEM_UNDO);
+
+    if (semop(sem_id, &semaphore, 1))
+    { // 1 ist Groesse Array
+        perror("Error in semop P()");
+        exit(1);
+    }
+}
 void write()
 {
     sleep(1);
@@ -40,11 +68,6 @@ void init_sem()
         perror("Error in semctl");
         exit(1);
     }
-    if (semctl(sem_id, 2, GETVAL, 1) < 0)
-    {
-        perror("Error in semctl");
-        exit(1);
-    }
 }
 int main()
 {
@@ -54,7 +77,7 @@ int main()
         perror("Fehler bei ftok()");
         exit(1);
     }
-    if ((sem_id = semget(sem_key, 3, IPC_CREAT | 0666)) < 0)
+    if ((sem_id = semget(sem_key, 2, IPC_CREAT | 0666)) < 0)
     {
         perror("Error in semget");
         exit(1);
@@ -65,21 +88,46 @@ int main()
     // initialise writer processes
     for (int i = 0; i < NUM_OF_WRITER; i++)
     {
-        if ((writer[i] = fork()) < 0)
+        switch (fork())
         {
-            perror("Fehler bei fork() fuer writer");
+        case 0:
+            P(writer);
+            write();
+            V(writer);
+            exit(0);
+
+        case -1:
+            perror("Error on fork");
             exit(1);
+        default:
         }
     }
 
     // initialize reader processes
     for (int i = 0; i < NUM_OF_READER; i++)
     {
+        /* code */
 
-        if ((reader[i] = fork()) < 0)
+        switch (fork())
         {
-            perror("Fehler bei fork() fuer reader");
+        case 0:
+            P(mutex);
+            reader++;
+            if (1 == reader)
+                P(writer);
+            V(mutex);
+            read();
+            P(mutex);
+            reader--;
+            if (0 == reader)
+                V(writer);
+            V(mutex);
+            exit(0);
+
+        case -1:
+            perror("Error on fork");
             exit(1);
+        default:
         }
     }
 }
