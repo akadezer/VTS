@@ -29,13 +29,21 @@ void read()
 }
 void init_sem()
 {
-    for (int i = 0; i < 2; i++)
+
+    if (semctl(sem_id, 0, SETVAL, 1) < 0)
     {
-        if (semctl(sem_id, i, SETVAL, 1) < 0)
-        {
-            perror("Error in semctl");
-            exit(1);
-        }
+        perror("Error in semctl");
+        exit(1);
+    }
+    if (semctl(sem_id, 1, SETVAL, 1) < 0)
+    {
+        perror("Error in semctl");
+        exit(1);
+    }
+    if (semctl(sem_id, 2, GETVAL, 1) < 0)
+    {
+        perror("Error in semctl");
+        exit(1);
     }
 }
 int main()
@@ -46,7 +54,7 @@ int main()
         perror("Fehler bei ftok()");
         exit(1);
     }
-    if ((sem_id = semget(sem_key, 2, IPC_CREAT | 0666)) < 0)
+    if ((sem_id = semget(sem_key, 3, IPC_CREAT | 0666)) < 0)
     {
         perror("Error in semget");
         exit(1);
