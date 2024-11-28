@@ -5,7 +5,7 @@ package blatt4;
 public class Position extends Figur {
 
 	@Override
-	public void setPosition(char x, int y) {
+	public synchronized void setPosition(char x, int y) {
 		this.x = x;
 		MachMal.eineZehntelSekundeLangGarNichts();
 		this.y = y;
@@ -13,7 +13,7 @@ public class Position extends Figur {
 	}
 
 	@Override
-	public String getPosition() {
+	public synchronized String getPosition() {
 	
 		for (int i = 0; i <= 10; i++) {
 			MachMal.eineZehntelSekundeLangGarNichts();

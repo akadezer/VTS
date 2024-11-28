@@ -14,3 +14,13 @@ static Position p;
 		System.out.println("test");}
 
 }
+
+/* b) Die Ausgabe lässt sich einerseits nur mittels debugger ablesen, da der Schreiber Thread keine Abbruchbedingung hat. 
+ * Davon ausgehend wenn man sich die funktion im Debugger anschaut, erhält man dann die Ausgabe.
+ * Das führt dazu das der Leser Thread im Schreiber Thread dazwischen kommen kann. 
+ * D.h das dass Schreiben nicht ganz abgeschlossen ist, der Leser jedoch schon die nicht fertig geschriebenen Daten liest.
+ * 
+ * 
+ * 
+ *  
+ */
